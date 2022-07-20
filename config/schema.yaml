@@ -1,41 +1,43 @@
 columns:
-    instant:int
-	dteday:category
-	season:int
-	yr:int
-	mnth:int
-	hr:int
-	holiday:int
-	weekday:int
-	workingday:int
-	weathersit:int
-	temp:float
-	atemp:float
-	hum:float
-	windspeed:float
-	casual:int
-	registered:int
-	cnt:int
+  instant: int
+  dteday: category
+  season: int
+  yr: int
+  mnth: int
+  hr: int
+  holiday: int
+  weekday: int
+  workingday: int
+  weathersit: int
+  temp: float
+  atemp: float
+  hum: float
+  windspeed: float
+  casual: int
+  registered: int
+  cnt: int
 
 numerical_columns:
-	- instant
-	- season
-	- yr
-	- mnth
-	- hr
-	- holiday
-	- weekday
-	- workingday
-	- weathersit
-	- temp
-	- atemp
-	- hum
-	- windspeed
-	- casual
-	- registered
-	- cnt
+  - instant
+  - season
+  - yr
+  - mnth
+  - hr
+  - holiday
+  - weekday
+  - workingday
+  - weathersit
+  - temp
+  - atemp
+  - hum
+  - windspeed
+  - casual
+  - registered
+  - cnt
 
 categorical_columns:
-	dteday
+  - dteday
 
 target_column: cnt
+
+

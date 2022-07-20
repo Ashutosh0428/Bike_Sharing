@@ -33,10 +33,20 @@ from bike.util.util import read_yaml_file, save_object, save_numpy_array_data, l
 class FeatureGenerator(BaseEstimator, TransformerMixin):
 
     def __init__(self, add_bedrooms_per_room=True,
-                 total_rooms_ix=3,
-                 population_ix=5,
-                 households_ix=6,
-                 total_bedrooms_ix=4, columns=None):
+                 instant_ix=0,
+                 dteday_ix=1,
+                 season_ix=2,
+                 yr_ix=3,
+                 mnth_ix=4,
+                 hr_ix=5,
+                 holiday_ix=6,
+                 weekday_ix=7,
+                 workingday_ix=8,
+                 weathersit_ix=9,
+                 temp_ix=10,
+                 atemp_ix=11,
+                 hum_ix=12,
+                 windspeed_ix=13, columns=None):
         """
         FeatureGenerator Initialization
         add_bedrooms_per_room: bool
@@ -48,23 +58,59 @@ class FeatureGenerator(BaseEstimator, TransformerMixin):
         try:
             self.columns = columns
             if self.columns is not None:
-                total_rooms_ix = self.columns.index(COLUMN_TOTAL_ROOMS)
-                population_ix = self.columns.index(COLUMN_POPULATION)
-                households_ix = self.columns.index(COLUMN_HOUSEHOLDS)
-                total_bedrooms_ix = self.columns.index(COLUMN_TOTAL_BEDROOM)
+                instant_ix = self.columns.index(COLUMN_instant)
+                dteday_ix = self.columns.index(COLUMN_dteday)
+                season_ix = self.columns.index(COLUMN_season)
+                yr_ix = self.columns.index(COLUMN_yr)
+                mnth_ix = self.columns.index(COLUMN_mnth)
+                hr_ix = self.columns.index(COLUMN_hr)
+                holiday_ix = self.columns.index(COLUMN_holiday)
+                weekday_ix = self.columns.index(COLUMN_weekday)
+                workingday_ix = self.columns.index(COLUMN_workingday)
+                weathersit_ix = self.columns.index(COLUMN_weathersit)
+                temp_ix = self.columns.index(COLUMN_temp)
+                atemp_ix = self.columns.index(COLUMN_atemp)
+                hum_ix = self.columns.index(COLUMN_hum)
+                windspeed_ix = self.columns.index(COLUMN_windspeed)
 
             self.add_bedrooms_per_room = add_bedrooms_per_room
-            self.total_rooms_ix = total_rooms_ix
-            self.population_ix = population_ix
-            self.households_ix = households_ix
-            self.total_bedrooms_ix = total_bedrooms_ix
+            self.instant_ix = instant_ix
+            self.dteday_ix = dteday_ix
+            self.season_ix = season_ix
+            self.yr_ix = yr_ix
+            self.mnth_ix = mnth_ix
+            self.hr_ix = hr_ix
+            self.holiday_ix = holiday_ix
+            self.weekday_ix = weekday_ix
+            self.workingday_ix = workingday_ix
+            self.weathersit_ix = weathersit_ix
+            self.temp_ix= temp_ix
+            self.atemp_ix = atemp_ix
+            self.hum_ix = hum_ix
+            self.windspeed_ix = windspeed_ix
+
         except Exception as e:
             raise bikeException(e, sys) from e
 
-    def fit(self, X, y=None):
-        return self
+    '''def fit(self, X, y=None):
+        return self'''
 
-    def transform(self, X, y=None):
+    def dtype_change(self,df):
+        try:
+            logging.info(f"{'=' * 20}Ashutosh log started.{'=' * 20} ")
+            df['self.season_ix'] = df['self.season_ix'].astype('object')
+            df['self.mnth_ix'] = df['self.mnth_ix'].astype('object')
+            df['self.weekday_ix'] = df['self.weekday_ix'].astype('object')
+            df['self.weathersit_ix'] = df['self.weathersit_ix'].astype('object')
+            df['self.workingday_ix'] = df['self.workingday_ix'].astype('object')
+            df['yr_ix'] = df['yr_ix'].astype('object')
+            df['self.holiday_ix'] = df['self.holiday_ix'].astype('object')
+            return df
+        except Exception as e:
+            raise bikeException(e, sys) from e
+
+
+    '''def transform(self, X, y=None):
         try:
             room_per_household = X[:, self.total_rooms_ix] / \
                                  X[:, self.households_ix]
@@ -81,8 +127,7 @@ class FeatureGenerator(BaseEstimator, TransformerMixin):
 
             return generated_feature
         except Exception as e:
-            raise bikeException(e, sys) from e
-
+            raise bikeException(e, sys) from e'''
 
 class DataTransformation:
 
@@ -108,20 +153,20 @@ class DataTransformation:
             numerical_columns = dataset_schema[NUMERICAL_COLUMN_KEY]
             categorical_columns = dataset_schema[CATEGORICAL_COLUMN_KEY]
 
-            num_pipeline = Pipeline(steps=[
-                ('imputer', SimpleImputer(strategy="median")),
-                ('feature_generator', FeatureGenerator(
-                    add_bedrooms_per_room=self.data_transformation_config.add_bedroom_per_room,
-                    columns=numerical_columns
-                )),
-                ('scaler', StandardScaler())
-            ]
-            )
+            '''num_pipeline = Pipeline(steps=[('scaler', StandardScaler())])
+                #('imputer', SimpleImputer(strategy="median")),
+                #('feature_generator', FeatureGenerator(
+                 #   add_bedrooms_per_room=self.data_transformation_config.add_bedroom_per_room,
+                  #  columns=numerical_columns
+                #)),
+               # ('scaler', StandardScaler())
+            #]
+            #)
 
             cat_pipeline = Pipeline(steps=[
-                ('impute', SimpleImputer(strategy="most_frequent")),
-                ('one_hot_encoder', OneHotEncoder()),
-                ('scaler', StandardScaler(with_mean=False))
+                #('impute', SimpleImputer(strategy="most_frequent")),
+                #('one_hot_encoder', OneHotEncoder()),
+                #('scaler', StandardScaler(with_mean=False))
             ]
             )
 
@@ -133,9 +178,10 @@ class DataTransformation:
                 ('cat_pipeline', cat_pipeline, categorical_columns),
             ])
             return preprocessing
-
+'''
         except Exception as e:
             raise bikeException(e, sys) from e
+
 
     def initiate_data_transformation(self) -> DataTransformationArtifact:
         try:
@@ -165,12 +211,12 @@ class DataTransformation:
             target_feature_test_df = test_df[target_column_name]
 
             logging.info(f"Applying preprocessing object on training dataframe and testing dataframe")
-            input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df)
-            input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df)
+            #input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df)
+            #input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df)
 
-            train_arr = np.c_[input_feature_train_arr, np.array(target_feature_train_df)]
+            train_arr = np.c_[input_feature_train_df, np.array(target_feature_train_df)]
 
-            test_arr = np.c_[input_feature_test_arr, np.array(target_feature_test_df)]
+            test_arr = np.c_[input_feature_test_df, np.array(target_feature_test_df)]
 
             transformed_train_dir = self.data_transformation_config.transformed_train_dir
             transformed_test_dir = self.data_transformation_config.transformed_test_dir
