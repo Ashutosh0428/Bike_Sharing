@@ -71,6 +71,8 @@ NUMERICAL_COLUMN_KEY = "numerical_columns"
 CATEGORICAL_COLUMN_KEY = "categorical_columns"
 
 TARGET_COLUMN_KEY = "target_column"
+DROP = "drop_col"
+
 
 # Model Training related variables
 
@@ -94,3 +96,4 @@ HISTORY_KEY = "history"
 MODEL_PATH_KEY = "model_path"
 
 EXPERIMENT_DIR_NAME = "experiment"
+EXPERIMENT_FILE_NAME="experiment.csv"

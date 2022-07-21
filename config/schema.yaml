@@ -1,14 +1,13 @@
 columns:
-  instant: int
-  dteday: category
-  season: int
-  yr: int
-  mnth: int
+  dteday: datetime64[ns]
+  season: object
+  yr: object
+  mnth: object
   hr: int
-  holiday: int
-  weekday: int
-  workingday: int
-  weathersit: int
+  holiday: object
+  weekday: object
+  workingday: object
+  weathersit: object
   temp: float
   atemp: float
   hum: float
@@ -18,15 +17,7 @@ columns:
   cnt: int
 
 numerical_columns:
-  - instant
-  - season
-  - yr
-  - mnth
   - hr
-  - holiday
-  - weekday
-  - workingday
-  - weathersit
   - temp
   - atemp
   - hum
@@ -37,7 +28,16 @@ numerical_columns:
 
 categorical_columns:
   - dteday
+  - season
+  - yr
+  - mnth
+  - holiday
+  - weekday
+  - workingday
+  - weathersit
 
 target_column: cnt
+
+drop_col: dteday
 
 

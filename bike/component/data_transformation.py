@@ -32,21 +32,20 @@ from bike.util.util import read_yaml_file, save_object, save_numpy_array_data, l
 
 class FeatureGenerator(BaseEstimator, TransformerMixin):
 
-    def __init__(self, add_bedrooms_per_room=True,
-                 instant_ix=0,
-                 dteday_ix=1,
-                 season_ix=2,
-                 yr_ix=3,
-                 mnth_ix=4,
-                 hr_ix=5,
-                 holiday_ix=6,
-                 weekday_ix=7,
-                 workingday_ix=8,
-                 weathersit_ix=9,
-                 temp_ix=10,
-                 atemp_ix=11,
-                 hum_ix=12,
-                 windspeed_ix=13, columns=None):
+    '''def __init__(self,
+                 dteday_ix=0,
+                 season_ix=1,
+                 yr_ix=2,
+                 mnth_ix=3,
+                 hr_ix=4,
+                 holiday_ix=5,
+                 weekday_ix=6,
+                 workingday_ix=7,
+                 weathersit_ix=8,
+                 temp_ix=9,
+                 atemp_ix=10,
+                 hum_ix=11,
+                 windspeed_ix=12, columns=None):
         """
         FeatureGenerator Initialization
         add_bedrooms_per_room: bool
@@ -58,8 +57,7 @@ class FeatureGenerator(BaseEstimator, TransformerMixin):
         try:
             self.columns = columns
             if self.columns is not None:
-                instant_ix = self.columns.index(COLUMN_instant)
-                dteday_ix = self.columns.index(COLUMN_dteday)
+                #dteday_ix = self.columns.index(COLUMN_dteday)
                 season_ix = self.columns.index(COLUMN_season)
                 yr_ix = self.columns.index(COLUMN_yr)
                 mnth_ix = self.columns.index(COLUMN_mnth)
@@ -73,9 +71,8 @@ class FeatureGenerator(BaseEstimator, TransformerMixin):
                 hum_ix = self.columns.index(COLUMN_hum)
                 windspeed_ix = self.columns.index(COLUMN_windspeed)
 
-            self.add_bedrooms_per_room = add_bedrooms_per_room
-            self.instant_ix = instant_ix
-            self.dteday_ix = dteday_ix
+
+            #self.dteday_ix = dteday_ix
             self.season_ix = season_ix
             self.yr_ix = yr_ix
             self.mnth_ix = mnth_ix
@@ -90,7 +87,7 @@ class FeatureGenerator(BaseEstimator, TransformerMixin):
             self.windspeed_ix = windspeed_ix
 
         except Exception as e:
-            raise bikeException(e, sys) from e
+            raise bikeException(e, sys) from e'''
 
     '''def fit(self, X, y=None):
         return self'''
@@ -153,20 +150,17 @@ class DataTransformation:
             numerical_columns = dataset_schema[NUMERICAL_COLUMN_KEY]
             categorical_columns = dataset_schema[CATEGORICAL_COLUMN_KEY]
 
-            '''num_pipeline = Pipeline(steps=[('scaler', StandardScaler())])
-                #('imputer', SimpleImputer(strategy="median")),
-                #('feature_generator', FeatureGenerator(
-                 #   add_bedrooms_per_room=self.data_transformation_config.add_bedroom_per_room,
-                  #  columns=numerical_columns
-                #)),
-               # ('scaler', StandardScaler())
-            #]
-            #)
+            num_pipeline = Pipeline(steps=[
+                ('imputer', SimpleImputer(strategy="median")),
+
+                ('scaler', StandardScaler())
+            ]
+            )
 
             cat_pipeline = Pipeline(steps=[
-                #('impute', SimpleImputer(strategy="most_frequent")),
-                #('one_hot_encoder', OneHotEncoder()),
-                #('scaler', StandardScaler(with_mean=False))
+                ('impute', SimpleImputer(strategy="most_frequent")),
+                ('one_hot_encoder', OneHotEncoder()),
+                ('scaler', StandardScaler(with_mean=False))
             ]
             )
 
@@ -177,8 +171,9 @@ class DataTransformation:
                 ('num_pipeline', num_pipeline, numerical_columns),
                 ('cat_pipeline', cat_pipeline, categorical_columns),
             ])
+
             return preprocessing
-'''
+
         except Exception as e:
             raise bikeException(e, sys) from e
 
@@ -202,21 +197,25 @@ class DataTransformation:
             schema = read_yaml_file(file_path=schema_file_path)
 
             target_column_name = schema[TARGET_COLUMN_KEY]
+            drop=schema[DROP]
 
             logging.info(f"Splitting input and target feature from training and testing dataframe.")
             input_feature_train_df = train_df.drop(columns=[target_column_name], axis=1)
+            input_feature_train_df1= input_feature_train_df.drop(columns=[drop], axis=1)
             target_feature_train_df = train_df[target_column_name]
 
             input_feature_test_df = test_df.drop(columns=[target_column_name], axis=1)
+            input_feature_test_df1= input_feature_test_df.drop(columns=[drop], axis=1)
             target_feature_test_df = test_df[target_column_name]
-
+            logging.info(f"x: {input_feature_test_df1}")
+            logging.info(f"y: {target_feature_test_df}")
             logging.info(f"Applying preprocessing object on training dataframe and testing dataframe")
-            #input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df)
-            #input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df)
+           # input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df1)
+            #input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df1)
 
-            train_arr = np.c_[input_feature_train_df, np.array(target_feature_train_df)]
+            train_arr = np.c_[input_feature_train_df1, np.array(target_feature_train_df)]
 
-            test_arr = np.c_[input_feature_test_df, np.array(target_feature_test_df)]
+            test_arr = np.c_[input_feature_test_df1, np.array(target_feature_test_df)]
 
             transformed_train_dir = self.data_transformation_config.transformed_train_dir
             transformed_test_dir = self.data_transformation_config.transformed_test_dir
