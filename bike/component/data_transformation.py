@@ -151,7 +151,7 @@ class DataTransformation:
             categorical_columns = dataset_schema[CATEGORICAL_COLUMN_KEY]
 
             num_pipeline = Pipeline(steps=[
-                ('imputer', SimpleImputer(strategy="median")),
+               ('imputer', SimpleImputer(strategy="median")),
 
                 ('scaler', StandardScaler())
             ]
@@ -159,7 +159,7 @@ class DataTransformation:
 
             cat_pipeline = Pipeline(steps=[
                 ('impute', SimpleImputer(strategy="most_frequent")),
-                ('one_hot_encoder', OneHotEncoder()),
+                #('one_hot_encoder', OneHotEncoder()),
                 ('scaler', StandardScaler(with_mean=False))
             ]
             )
@@ -198,24 +198,29 @@ class DataTransformation:
 
             target_column_name = schema[TARGET_COLUMN_KEY]
             drop=schema[DROP]
-
+            drop1=schema[DROP1]
+            drop2=schema[DROP2]
             logging.info(f"Splitting input and target feature from training and testing dataframe.")
             input_feature_train_df = train_df.drop(columns=[target_column_name], axis=1)
             input_feature_train_df1= input_feature_train_df.drop(columns=[drop], axis=1)
+            input_feature_train_df2=input_feature_train_df1.drop(columns=[drop1],axis=1)
+            input_feature_train_df3=input_feature_train_df2.drop(columns=[drop2],axis=1)
             target_feature_train_df = train_df[target_column_name]
 
             input_feature_test_df = test_df.drop(columns=[target_column_name], axis=1)
             input_feature_test_df1= input_feature_test_df.drop(columns=[drop], axis=1)
+            input_feature_test_df2=input_feature_test_df1.drop(columns=[drop1],axis=1)
+            input_feature_test_df3=input_feature_test_df2.drop(columns=[drop2],axis=1)
             target_feature_test_df = test_df[target_column_name]
-            logging.info(f"x: {input_feature_test_df1}")
+            logging.info(f"x: {input_feature_test_df3}")
             logging.info(f"y: {target_feature_test_df}")
             logging.info(f"Applying preprocessing object on training dataframe and testing dataframe")
            # input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df1)
             #input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df1)
 
-            train_arr = np.c_[input_feature_train_df1, np.array(target_feature_train_df)]
+            train_arr = np.c_[input_feature_train_df3, np.array(target_feature_train_df)]
 
-            test_arr = np.c_[input_feature_test_df1, np.array(target_feature_test_df)]
+            test_arr = np.c_[input_feature_test_df3, np.array(target_feature_test_df)]
 
             transformed_train_dir = self.data_transformation_config.transformed_train_dir
             transformed_test_dir = self.data_transformation_config.transformed_test_dir

@@ -39,5 +39,8 @@ categorical_columns:
 target_column: cnt
 
 drop_col: dteday
+drop1: casual
+drop2:  registered
+
 
 

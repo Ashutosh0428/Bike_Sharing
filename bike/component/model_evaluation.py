@@ -1,15 +1,14 @@
 from bike.logger import logging
 from bike.exception import bikeException
 from bike.entity.config_entity import ModelEvaluationConfig
-from bike.entity.artifact_entity import DataIngestionArtifact,DataValidationArtifact,ModelTrainerArtifact,ModelEvaluationArtifact
+from bike.entity.artifact_entity import DataIngestionArtifact, DataValidationArtifact, ModelTrainerArtifact, \
+    ModelEvaluationArtifact
 from bike.constant import *
 import numpy as np
 import os
 import sys
-from bike.util.util import write_yaml_file, read_yaml_file, load_object,load_data
+from bike.util.util import write_yaml_file, read_yaml_file, load_object, load_data
 from bike.entity.model_factory import evaluate_regression_model
-
-
 
 
 class ModelEvaluation:
@@ -53,6 +52,7 @@ class ModelEvaluation:
             eval_file_path = self.model_evaluation_config.model_evaluation_file_path
             model_eval_content = read_yaml_file(file_path=eval_file_path)
             model_eval_content = dict() if model_eval_content is None else model_eval_content
+
             previous_best_model = None
             if BEST_MODEL_KEY in model_eval_content:
                 previous_best_model = model_eval_content[BEST_MODEL_KEY]
@@ -90,20 +90,15 @@ class ModelEvaluation:
             schema_file_path = self.data_validation_artifact.schema_file_path
 
             train_dataframe = load_data(file_path=train_file_path,
-                                                           schema_file_path=schema_file_path,
-                                                           )
+                                        schema_file_path=schema_file_path,
+                                        )
             test_dataframe = load_data(file_path=test_file_path,
-                                                          schema_file_path=schema_file_path,
-                                                          )
+                                       schema_file_path=schema_file_path,
+                                       )
             schema_content = read_yaml_file(file_path=schema_file_path)
             target_column_name = schema_content[TARGET_COLUMN_KEY]
 
             # target_column
-            logging.info(f"Converting target column into numpy array.")
-            train_target_arr = np.array(train_dataframe[target_column_name])
-            test_target_arr = np.array(test_dataframe[target_column_name])
-            logging.info(f"Conversion completed target column into numpy array.")
-
             logging.info(f"Converting target column into numpy array.")
             train_target_arr = np.array(train_dataframe[target_column_name])
             test_target_arr = np.array(test_dataframe[target_column_name])
@@ -128,12 +123,12 @@ class ModelEvaluation:
             model_list = [model, trained_model_object]
 
             metric_info_artifact = evaluate_regression_model(model_list=model_list,
-                                                               X_train=train_dataframe,
-                                                               y_train=train_target_arr,
-                                                               X_test=test_dataframe,
-                                                               y_test=test_target_arr,
-                                                               base_accuracy=self.model_trainer_artifact.model_accuracy,
-                                                               )
+                                                             X_train=train_dataframe,
+                                                             y_train=train_target_arr,
+                                                             X_test=test_dataframe,
+                                                             y_test=test_target_arr,
+                                                             base_accuracy=self.model_trainer_artifact.model_accuracy,
+                                                             )
             logging.info(f"Model evaluation completed. model metric artifact: {metric_info_artifact}")
 
             if metric_info_artifact is None:

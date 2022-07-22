@@ -25,6 +25,37 @@ model_selection:
     search_param_grid:
       min_samples_leaf:
       - 2
+      - 4
+      - 6
       n_estimators:
       - 10
+      - 20
+
+  model_2:
+    module: sklearn.tree
+    class: DecisionTreeRegressor
+    search_param_grid:
+      max_depth:
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+
+
+  model_3:
+    module: sklearn.ensemble
+    class: ExtraTreesRegressor
+    search_param_grid:
+      max_depth:
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
 

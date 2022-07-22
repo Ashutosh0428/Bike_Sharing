@@ -72,7 +72,8 @@ CATEGORICAL_COLUMN_KEY = "categorical_columns"
 
 TARGET_COLUMN_KEY = "target_column"
 DROP = "drop_col"
-
+DROP1 = "drop1"
+DROP2 = "drop2"
 
 # Model Training related variables
 
