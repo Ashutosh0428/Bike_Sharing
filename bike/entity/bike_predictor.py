@@ -22,8 +22,6 @@ class HousingData:
                 atemp: float,
                 hum: float,
                 windspeed: float,
-                casual: int,
-                registered: int,
                 cnt: int= None
                  ):
         try:
@@ -39,9 +37,7 @@ class HousingData:
             self.atemp=atemp
             self.hum=hum
             self.windspeed=windspeed
-            self.casual=casual
-            self.registered=registered
-            self.cnt=cnt
+            self.cnt = cnt
 
         except Exception as e:
             raise bikeException(e, sys) from e
@@ -69,8 +65,6 @@ class HousingData:
                 "atemp": [self.atemp],
                 "humidity": [self.hum],
                 "windspeed": [self.windspeed],
-                "casual": [self.casual],
-                "registered": [self.registered]
             }
             return input_data
         except Exception as e:
@@ -99,7 +93,7 @@ class HousingPredictor:
         try:
             model_path = self.get_latest_model_path()
             model = load_object(file_path=model_path)
-            median_house_value = model.predict(X)
-            return median_house_value
+            cnt = model.predict(X)
+            return cnt
         except Exception as e:
             raise bikeException(e, sys) from e

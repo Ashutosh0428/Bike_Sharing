@@ -33,20 +33,19 @@ from bike.constant import EXPERIMENT_DIR_NAME, EXPERIMENT_FILE_NAME
 
 Experiment = namedtuple("Experiment", ["experiment_id", "initialization_timestamp", "artifact_time_stamp",
                                        "running_status", "start_time", "stop_time", "execution_time", "message",
-                                       "experiment_file_path"])
+                                       "experiment_file_path","accuracy", "is_model_accepted"])
 
-config = Configuartion()
-os.makedirs(config.training_pipeline_config.artifact_dir, exist_ok=True)
 
 
 class Pipeline(Thread):
-    experiment: Experiment = Experiment(*([None] * 9))
+    experiment: Experiment = Experiment(*([None] * 11))
 
-    experiment_file_path = os.path.join(config.training_pipeline_config.artifact_dir,
-                                        EXPERIMENT_DIR_NAME, EXPERIMENT_FILE_NAME)
+    experiment_file_path = None
 
-    def __init__(self, config: Configuartion = config) -> None:
+    def __init__(self, config: Configuartion) -> None:
         try:
+            os.makedirs(config.training_pipeline_config.artifact_dir, exist_ok=True)
+            Pipeline.experiment_file_path=os.path.join(config.training_pipeline_config.artifact_dir,EXPERIMENT_DIR_NAME, EXPERIMENT_FILE_NAME)
             super().__init__(daemon=False, name="pipeline")
             self.config = config
         except Exception as e:
@@ -133,7 +132,9 @@ class Pipeline(Thread):
                                              stop_time=None,
                                              execution_time=None,
                                              experiment_file_path=Pipeline.experiment_file_path,
-                                             message="Pipeline has been started."
+                                             is_model_accepted=None,
+                                             message="Pipeline has been started.",
+                                             accuracy=None,
                                              )
             logging.info(f"Pipeline experiment: {Pipeline.experiment}")
 
@@ -167,7 +168,9 @@ class Pipeline(Thread):
                                              stop_time=stop_time,
                                              execution_time=stop_time - Pipeline.experiment.start_time,
                                              message="Pipeline has been completed.",
-                                             experiment_file_path=Pipeline.experiment_file_path
+                                             experiment_file_path=Pipeline.experiment_file_path,
+                                             is_model_accepted=model_evaluation_artifact.is_model_accepted,
+                                             accuracy=model_trainer_artifact.model_accuracy
                                              )
             logging.info(f"Pipeline experiment: {Pipeline.experiment}")
             self.save_experiment()

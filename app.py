@@ -110,8 +110,8 @@ def predict():
     if request.method == 'POST':
         season = (request.form['season'])
         yr = (request.form['yr'])
-        month = (request.form['mnth'])
-        hour = (request.form['hr'])
+        mnth = (request.form['mnth'])
+        hr = (request.form['hr'])
         holiday = (request.form['holiday'])
         weekday = (request.form['weekday'])
         workingday = (request.form['workingday'])
@@ -120,29 +120,26 @@ def predict():
         atemp = (request.form['atemp'])
         hum = (request.form['hum'])
         windspeed = (request.form['windspeed'])
-        casual= (request.form['casual'])
-
 
         housing_data = HousingData(season=season,
                                    yr=yr,
-                                   month=month,
-                                   hour=hour,
+                                   mnth=mnth,
+                                   hr=hr,
                                    holiday=holiday,
                                    weekday=weekday,
                                    workingday=workingday,
                                    weathersit=weathersit,
-                                   tempy=temp,
+                                   temp=temp,
                                    atemp=atemp,
                                    hum=hum,
                                    windspeed=windspeed,
-                                   casual=casual
                                    )
         housing_df = housing_data.get_housing_input_data_frame()
         housing_predictor = HousingPredictor(model_dir=MODEL_DIR)
-        median_housing_value = housing_predictor.predict(X=housing_df)
+        cnt = housing_predictor.predict(X=housing_df)
         context = {
             BIKE_DATA_KEY: housing_data.get_housing_data_as_dict(),
-            COUNT_VALUE_KEY: median_housing_value,
+            COUNT_VALUE_KEY: cnt,
         }
         return render_template('predict.html', context=context)
     return render_template("predict.html", context=context)

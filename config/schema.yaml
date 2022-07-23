@@ -1,5 +1,5 @@
 columns:
-  dteday: datetime64[ns]
+  dteday: datetime64
   season: object
   yr: object
   mnth: object
@@ -27,7 +27,6 @@ numerical_columns:
   - cnt
 
 categorical_columns:
-  - dteday
   - season
   - yr
   - mnth
@@ -37,6 +36,50 @@ categorical_columns:
   - weathersit
 
 target_column: cnt
+
+domain_value:
+  season:
+    - 1
+    - 2
+    - 3
+    - 4
+  yr:
+    - 0
+    - 1
+  mnth:
+    -1
+    -2
+    -3
+    -4
+    -5
+    -6
+    -7
+    -8
+    -9
+    -10
+    -11
+    -12
+  weekday:
+    -0
+    -1
+    -2
+    -3
+    -4
+    -5
+    -6
+  hr:
+    -0
+  workingday:
+    -0
+    -1
+  weathersit:
+    -1
+    -2
+    -3
+    -4
+
+
+
 
 drop_col: dteday
 drop1: casual

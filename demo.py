@@ -3,10 +3,11 @@ from bike.exception import bikeException
 from bike.logger import logging
 from bike.config.configuration import Configuartion
 from bike.component.data_transformation import DataTransformation
-
+import os
 def main():
     try:
-        pipeline = Pipeline()
+        config_path = os.path.join("config","config.yaml")
+        pipeline = Pipeline(Configuartion(config_file_path=config_path))
         #pipeline.run_pipeline()
         pipeline.start()
         logging.info("main function execution completed.")

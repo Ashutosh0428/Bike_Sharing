@@ -8,9 +8,9 @@ from bike.entity.artifact_entity import DataIngestionArtifact, \
 import sys, os
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.preprocessing import StandardScaler, OneHotEncoder,LabelEncoder
 from sklearn.pipeline import Pipeline
-from sklearn.compose import ColumnTransformer
+from sklearn.compose import ColumnTransformer,make_column_selector
 from sklearn.impute import SimpleImputer
 import pandas as pd
 from bike.constant import *
@@ -30,9 +30,9 @@ from bike.util.util import read_yaml_file, save_object, save_numpy_array_data, l
 #   income_cat: float
 
 
-class FeatureGenerator(BaseEstimator, TransformerMixin):
+'''class FeatureGenerator(BaseEstimator, TransformerMixin):
 
-    '''def __init__(self,
+    def __init__(self,
                  dteday_ix=0,
                  season_ix=1,
                  yr_ix=2,
@@ -46,14 +46,14 @@ class FeatureGenerator(BaseEstimator, TransformerMixin):
                  atemp_ix=10,
                  hum_ix=11,
                  windspeed_ix=12, columns=None):
-        """
+        
         FeatureGenerator Initialization
         add_bedrooms_per_room: bool
         total_rooms_ix: int index number of total rooms columns
         population_ix: int index number of total population columns
         households_ix: int index number of  households columns
         total_bedrooms_ix: int index number of bedrooms columns
-        """
+        
         try:
             self.columns = columns
             if self.columns is not None:
@@ -87,10 +87,10 @@ class FeatureGenerator(BaseEstimator, TransformerMixin):
             self.windspeed_ix = windspeed_ix
 
         except Exception as e:
-            raise bikeException(e, sys) from e'''
+            raise bikeException(e, sys) from e
 
-    '''def fit(self, X, y=None):
-        return self'''
+    def fit(self, X, y=None):
+        return self
 
     def dtype_change(self,df):
         try:
@@ -107,7 +107,7 @@ class FeatureGenerator(BaseEstimator, TransformerMixin):
             raise bikeException(e, sys) from e
 
 
-    '''def transform(self, X, y=None):
+    def transform(self, X, y=None):
         try:
             room_per_household = X[:, self.total_rooms_ix] / \
                                  X[:, self.households_ix]
@@ -125,7 +125,6 @@ class FeatureGenerator(BaseEstimator, TransformerMixin):
             return generated_feature
         except Exception as e:
             raise bikeException(e, sys) from e'''
-
 class DataTransformation:
 
     def __init__(self, data_transformation_config: DataTransformationConfig,
@@ -134,10 +133,9 @@ class DataTransformation:
                  ):
         try:
             logging.info(f"{'=' * 20}Data Transformation log started.{'=' * 20} ")
-            self.data_transformation_config = data_transformation_config
             self.data_ingestion_artifact = data_ingestion_artifact
             self.data_validation_artifact = data_validation_artifact
-
+            self.data_transformation_config = data_transformation_config
         except Exception as e:
             raise bikeException(e, sys) from e
 
@@ -151,15 +149,15 @@ class DataTransformation:
             categorical_columns = dataset_schema[CATEGORICAL_COLUMN_KEY]
 
             num_pipeline = Pipeline(steps=[
-               ('imputer', SimpleImputer(strategy="median")),
+               #('imputer', SimpleImputer(strategy="median")),
 
                 ('scaler', StandardScaler())
             ]
             )
 
             cat_pipeline = Pipeline(steps=[
-                ('impute', SimpleImputer(strategy="most_frequent")),
-                #('one_hot_encoder', OneHotEncoder()),
+                #('impute', SimpleImputer(strategy="most_frequent")),
+                ('one_hot_encoder', LabelEncoder()),
                 ('scaler', StandardScaler(with_mean=False))
             ]
             )
@@ -176,6 +174,10 @@ class DataTransformation:
 
         except Exception as e:
             raise bikeException(e, sys) from e
+
+
+   # def fit(self, X, y=None):
+      #  return self
 
 
     def initiate_data_transformation(self) -> DataTransformationArtifact:
@@ -213,13 +215,15 @@ class DataTransformation:
             input_feature_test_df3=input_feature_test_df2.drop(columns=[drop2],axis=1)
             target_feature_test_df = test_df[target_column_name]
             logging.info(f"x: {input_feature_test_df3}")
-            logging.info(f"y: {target_feature_test_df}")
+            logging.info(f"y: {input_feature_train_df3}")
+            logging.info(f"x1:{target_feature_test_df}")
+            logging.info(f'y1:{target_feature_train_df}')
             logging.info(f"Applying preprocessing object on training dataframe and testing dataframe")
-           # input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df1)
-            #input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df1)
 
-            train_arr = np.c_[input_feature_train_df3, np.array(target_feature_train_df)]
+            #input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df3)
+           #input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df3)
 
+            train_arr = np.c_[input_feature_train_df3, np.array(target_feature_train_df,target_feature_train_df)]
             test_arr = np.c_[input_feature_test_df3, np.array(target_feature_test_df)]
 
             transformed_train_dir = self.data_transformation_config.transformed_train_dir
