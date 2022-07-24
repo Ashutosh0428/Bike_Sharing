@@ -1,5 +1,4 @@
 columns:
-  dteday: datetime64
   season: object
   yr: object
   mnth: object
@@ -12,8 +11,6 @@ columns:
   atemp: float
   hum: float
   windspeed: float
-  casual: int
-  registered: int
   cnt: int
 
 numerical_columns:
@@ -80,10 +77,6 @@ domain_value:
 
 
 
-
-drop_col: dteday
-drop1: casual
-drop2:  registered
 
 
 

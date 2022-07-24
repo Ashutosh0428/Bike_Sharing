@@ -20,7 +20,7 @@ class DataIngestion:
         except Exception as e:
             raise bikeException(e, sys)
 
-    def download_housing_data(self, ) -> str:
+    def download_housing_data(self, ):
         try:
             # extraction remote url to download dataset
             download_url = self.data_ingestion_config.dataset_download_url
@@ -72,7 +72,7 @@ class DataIngestion:
 
             housing_data_frame["count"] = pd.cut(
                 housing_data_frame["cnt"],
-                bins=[0.0, 150, 300, 450, 600, np.inf],
+                bins=[0, 10, 20, 30, 40, np.inf],
                 labels=[1, 2, 3, 4, 5]
             )
 
@@ -80,7 +80,7 @@ class DataIngestion:
             strat_train_set = None
             strat_test_set = None
 
-            split = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
+            split = StratifiedShuffleSplit(n_splits=1, test_size=0.3, random_state=42)
 
             for train_index, test_index in split.split(housing_data_frame, housing_data_frame["count"]):
                 strat_train_set = housing_data_frame.loc[train_index].drop(["count"], axis=1)

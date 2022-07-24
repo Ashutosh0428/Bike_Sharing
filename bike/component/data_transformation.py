@@ -139,7 +139,7 @@ class DataTransformation:
         except Exception as e:
             raise bikeException(e, sys) from e
 
-    def get_data_transformer_object(self) -> ColumnTransformer:
+    '''def get_data_transformer_object(self) -> ColumnTransformer:
         try:
             schema_file_path = self.data_validation_artifact.schema_file_path
 
@@ -157,7 +157,7 @@ class DataTransformation:
 
             cat_pipeline = Pipeline(steps=[
                 #('impute', SimpleImputer(strategy="most_frequent")),
-                ('one_hot_encoder', LabelEncoder()),
+                ('one_hot_encoder', OneHotEncoder()),
                 ('scaler', StandardScaler(with_mean=False))
             ]
             )
@@ -177,13 +177,21 @@ class DataTransformation:
 
 
    # def fit(self, X, y=None):
-      #  return self
-
+      #  return self'''
 
     def initiate_data_transformation(self) -> DataTransformationArtifact:
+        """
+        Description: Function is used to standardize the data(train and test both) with standard scaler and
+                     saved it in array form
+        return: is_transformed: Ture for transform and False for not transform
+                message: message after data transform completed
+                transformed_train_file_path: Path of transformed train file
+                transformed_test_file_path: Path of transformed test file
+                preprocessed_object_file_path: Save preprocessed object for predict data
+        """
         try:
             logging.info(f"Obtaining preprocessing object.")
-            preprocessing_obj = self.get_data_transformer_object()
+            preprocessing_obj = StandardScaler()
 
             logging.info(f"Obtaining training and test file path.")
             train_file_path = self.data_ingestion_artifact.train_file_path
@@ -198,33 +206,31 @@ class DataTransformation:
 
             schema = read_yaml_file(file_path=schema_file_path)
 
+
             target_column_name = schema[TARGET_COLUMN_KEY]
-            drop=schema[DROP]
-            drop1=schema[DROP1]
-            drop2=schema[DROP2]
+           # drop = schema[DROP]
+            #drop1 = schema[DROP1]
+            #drop2 = schema[DROP2]
             logging.info(f"Splitting input and target feature from training and testing dataframe.")
             input_feature_train_df = train_df.drop(columns=[target_column_name], axis=1)
-            input_feature_train_df1= input_feature_train_df.drop(columns=[drop], axis=1)
-            input_feature_train_df2=input_feature_train_df1.drop(columns=[drop1],axis=1)
-            input_feature_train_df3=input_feature_train_df2.drop(columns=[drop2],axis=1)
+           # input_feature_train_df1= input_feature_train_df.drop(columns=[drop], axis=1)
+            #input_feature_train_df2=input_feature_train_df.drop(columns=[drop1],axis=1)
+            #input_feature_train_df3=input_feature_train_df2.drop(columns=[drop2],axis=1)
             target_feature_train_df = train_df[target_column_name]
 
             input_feature_test_df = test_df.drop(columns=[target_column_name], axis=1)
-            input_feature_test_df1= input_feature_test_df.drop(columns=[drop], axis=1)
-            input_feature_test_df2=input_feature_test_df1.drop(columns=[drop1],axis=1)
-            input_feature_test_df3=input_feature_test_df2.drop(columns=[drop2],axis=1)
+            #input_feature_test_df1= input_feature_test_df.drop(columns=[drop], axis=1)
+            #input_feature_test_df2=input_feature_test_df.drop(columns=[drop1],axis=1)
+            #input_feature_test_df3=input_feature_test_df2.drop(columns=[drop2],axis=1)
             target_feature_test_df = test_df[target_column_name]
-            logging.info(f"x: {input_feature_test_df3}")
-            logging.info(f"y: {input_feature_train_df3}")
-            logging.info(f"x1:{target_feature_test_df}")
-            logging.info(f'y1:{target_feature_train_df}')
+
             logging.info(f"Applying preprocessing object on training dataframe and testing dataframe")
 
-            #input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df3)
-           #input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df3)
+            input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df)
+            input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df)
 
-            train_arr = np.c_[input_feature_train_df3, np.array(target_feature_train_df,target_feature_train_df)]
-            test_arr = np.c_[input_feature_test_df3, np.array(target_feature_test_df)]
+            train_arr = np.c_[input_feature_train_arr, np.array(target_feature_train_df,target_feature_train_df)]
+            test_arr = np.c_[input_feature_test_arr, np.array(target_feature_test_df)]
 
             transformed_train_dir = self.data_transformation_config.transformed_train_dir
             transformed_test_dir = self.data_transformation_config.transformed_test_dir
