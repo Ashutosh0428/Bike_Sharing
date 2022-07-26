@@ -5,6 +5,8 @@ name: Deploy to heroku.
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [ "main" ]
 
 # Your workflows jobs.
 jobs:
@@ -14,6 +16,17 @@ jobs:
       # Check-out your repository.
       - name: Checkout
         uses: actions/checkout@v2
+      - name: docker login
+        env:
+          DOCKER_USER: ${{secrets.DOCKER_USER}}
+          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+        run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+      - name: Build the docker image 
+        run: docker build . --file Dockerfile --tag ashu1407/bikesharingapp:0.4.49
+   
+      - name: Docker Push
+        run: docker push ${{secrets.DOCKER_USER}}/bikesharingapp:0.4.47
 
 
 ### ⬇ IMPORTANT PART ⬇ ###
