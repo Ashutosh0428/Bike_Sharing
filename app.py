@@ -1,6 +1,6 @@
 from flask import Flask, request
 import sys
-
+from wsgiref import simple_server
 import pip
 from bike.util.util import read_yaml_file, write_yaml_file
 from matplotlib.style import context
@@ -221,6 +221,10 @@ def render_log_dir(req_path):
     }
     return render_template('log_files.html', result=result)
 
-
+port = int(os.getenv("PORT", 5000))
 if __name__ == "__main__":
-    app.run()
+    host = '0.0.0.0'
+    # port = 5000
+    httpd = simple_server.make_server(host, port, app)
+    # print("Serving on %s %d" % (host, port))
+    httpd.serve_forever()
