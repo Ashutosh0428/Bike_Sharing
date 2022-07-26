@@ -26,7 +26,7 @@ jobs:
         run: docker build . --file Dockerfile --tag ashu1407/bikesharingapp:0.4.49
    
       - name: Docker Push
-        run: docker push ${{secrets.DOCKER_USER}}/bikesharingapp:0.4.47
+        run: docker push ${{secrets.DOCKER_USER}}/bikesharingapp:0.4.49
 
 
 ### ⬇ IMPORTANT PART ⬇ ###
