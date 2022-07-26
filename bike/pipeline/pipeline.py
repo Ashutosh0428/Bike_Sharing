@@ -24,14 +24,14 @@ from bike.constant import EXPERIMENT_DIR_NAME
 
 Experiment = namedtuple("Experiment", ["experiment_id", "initialization_timestamp", "artifact_time_stamp",
                                        "running_status", "start_time", "stop_time", "execution_time", "message",
-                                       "experiment_file_path"])
+                                       "experiment_file_path","accuracy", "is_model_accepted"])
 
 config = Configuartion()
 os.makedirs(config.training_pipeline_config.artifact_dir, exist_ok=True)
 
 
 class Pipeline(Thread):
-    experiment: Experiment = Experiment(*([None] * 9))
+    experiment: Experiment = Experiment(*([None] * 11))
 
     experiment_file_path = os.path.join(config.training_pipeline_config.artifact_dir,
                                         EXPERIMENT_DIR_NAME, "experiment.csv")
