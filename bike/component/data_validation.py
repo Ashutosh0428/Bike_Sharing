@@ -62,7 +62,7 @@ class DataValidation:
         try:
             validation_status = False
 
-            train_df = pd.read_csv(self.data_ingestion_artifact.train_file_path)
+            '''train_df = pd.read_csv(self.data_ingestion_artifact.train_file_path)
             test_df = pd.read_csv(self.data_ingestion_artifact.test_file_path)
 
             # reading column names from schema.yaml file
@@ -100,8 +100,9 @@ class DataValidation:
                     if yr_val_train_df == yr_val_test_df == region_yaml_col_value:
                         validation_status = True
                         logging.info(
-                            f'season and yr column hvaing same values in Training, Testing and schema.yaml file.')
-                return validation_status
+                            f'season and yr column hvaing same values in Training, Testing and schema.yaml file.')'''
+            validation_status = False
+            return validation_status
         except Exception as e:
             raise bikeException(e, sys) from e
 
