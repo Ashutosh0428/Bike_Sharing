@@ -1,12 +1,3 @@
-from bike.config.configuration import Configuartion
-from bike.logger import logging
-from bike.exception import bikeException
-
-from bike.entity.artifact_entity import DataIngestionArtifact, DataValidationArtifact,DataTransformationArtifact
-from bike.entity.config_entity import DataIngestionConfig
-from bike.component.data_ingestion import DataIngestion
-from bike.component.data_validation import DataValidation
-from bike.component.data_transformation import DataTransformation
 from collections import namedtuple
 from datetime import datetime
 import uuid
@@ -29,23 +20,24 @@ import os, sys
 from collections import namedtuple
 from datetime import datetime
 import pandas as pd
-from bike.constant import EXPERIMENT_DIR_NAME, EXPERIMENT_FILE_NAME
+from bike.constant import EXPERIMENT_DIR_NAME
 
 Experiment = namedtuple("Experiment", ["experiment_id", "initialization_timestamp", "artifact_time_stamp",
                                        "running_status", "start_time", "stop_time", "execution_time", "message",
-                                       "experiment_file_path","accuracy", "is_model_accepted"])
+                                       "experiment_file_path"])
 
+config = Configuartion()
+os.makedirs(config.training_pipeline_config.artifact_dir, exist_ok=True)
 
 
 class Pipeline(Thread):
-    experiment: Experiment = Experiment(*([None] * 11))
+    experiment: Experiment = Experiment(*([None] * 9))
 
-    experiment_file_path = None
+    experiment_file_path = os.path.join(config.training_pipeline_config.artifact_dir,
+                                        EXPERIMENT_DIR_NAME, "experiment.csv")
 
-    def __init__(self, config: Configuartion) -> None:
+    def __init__(self, config: Configuartion = config) -> None:
         try:
-            os.makedirs(config.training_pipeline_config.artifact_dir, exist_ok=True)
-            Pipeline.experiment_file_path=os.path.join(config.training_pipeline_config.artifact_dir,EXPERIMENT_DIR_NAME, EXPERIMENT_FILE_NAME)
             super().__init__(daemon=False, name="pipeline")
             self.config = config
         except Exception as e:
@@ -211,7 +203,7 @@ class Pipeline(Thread):
         try:
             if os.path.exists(Pipeline.experiment_file_path):
                 df = pd.read_csv(Pipeline.experiment_file_path)
-                limit = -1 * int(limit)
+                limit =-1 * int(limit)
                 return df[limit:].drop(columns=["experiment_file_path", "initialization_timestamp"], axis=1)
             else:
                 return pd.DataFrame()
