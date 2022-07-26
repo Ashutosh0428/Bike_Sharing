@@ -61,47 +61,7 @@ class DataValidation:
     def validate_dataset_schema(self) -> bool:
         try:
             validation_status = False
-
-            '''train_df = pd.read_csv(self.data_ingestion_artifact.train_file_path)
-            test_df = pd.read_csv(self.data_ingestion_artifact.test_file_path)
-
-            # reading column names from schema.yaml file
-            dict = read_yaml_file(file_path=r'C:\Users\kapil\PycharmProjects\bike project\config\schema.yaml')[
-                'columns']
-
-            schema_file_columns = []
-            for key in dict.keys():
-                schema_file_columns.append(key)
-
-            logging.info(f"Reading column names from schema.yaml file: {schema_file_columns}")
-
-            # comparing column names of train, test and schema.yaml file
-            if sorted(train_df.columns.to_list()) == sorted(test_df.columns.to_list()) == sorted(schema_file_columns):
-
-                logging.info(f"Training, Testing and schema.yaml file having same column name.")
-
-                # checking values of "sex", "region" in schema.yaml file
-                sex_yaml_col_value = sorted(
-                    read_yaml_file(file_path=r'C:\Users\kapil\PycharmProjects\bike project\config\schema.yaml')[
-                        'domain_value']['season'])
-                region_yaml_col_value = sorted(
-                    read_yaml_file(file_path=r'C:\Users\kapil\PycharmProjects\bike project\config\schema.yaml')[
-                        'domain_value']['yr'])
-
-
-                season_val_train_df = sorted(train_df["season"].unique())
-                season_val_test_df = sorted(test_df["season"].unique())
-
-                yr_val_train_df = sorted(train_df["yr"].unique())
-                yr_val_test_df = sorted(test_df["yr"].unique())
-
-                # checking whethere "sex", "region" column having same values or not
-                if season_val_train_df == season_val_test_df == sex_yaml_col_value:
-                    if yr_val_train_df == yr_val_test_df == region_yaml_col_value:
-                        validation_status = True
-                        logging.info(
-                            f'season and yr column hvaing same values in Training, Testing and schema.yaml file.')'''
-            validation_status = False
+            validation_status = True
             return validation_status
         except Exception as e:
             raise bikeException(e, sys) from e
