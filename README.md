@@ -103,7 +103,7 @@ docker stop <container_id>
 ### deployment link:-
 
 
-     heroku :- https://creditcard-fault-detection.herokuapp.com/
+     heroku :- https://bikesharing1.herokuapp.com/
      
      
-     AWS:- http://3.6.87.104:5000/
+     AWS:- https://bikesharing123.azurewebsites.net/
